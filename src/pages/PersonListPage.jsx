@@ -21,24 +21,31 @@ export default function PersonListPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.logo}>Cadastro de Pessoas</h1>
+        <div className={styles.logoWrap}>
+          <div className={styles.logoIcon}>P</div>
+          <div>
+            <div className={styles.logo}>Personalité</div>
+            <div className={styles.logoSub}>Cadastro de Pessoas</div>
+          </div>
+        </div>
         <nav className={styles.nav}>
           <Link to="/">
-            <Button variant="secondary">Novo cadastro</Button>
+            <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              Novo cadastro
+            </Button>
           </Link>
         </nav>
       </header>
 
       <main className={styles.main}>
-        <h2 className={styles.title}>Pessoas cadastradas</h2>
+        <h1 className={styles.heading}>Pessoas cadastradas</h1>
+        <p className={styles.subheading}>Todos os registros do sistema</p>
 
         {loading && <p className={styles.loading}>Carregando...</p>}
         {error && <Alert type="error">{error}</Alert>}
 
         <div className={styles.list}>
-          {persons.map(person => (
-            <PersonCard key={person.id} person={person} />
-          ))}
+          {persons.map(p => <PersonCard key={p.id} person={p} />)}
         </div>
 
         {!loading && !error && persons.length === 0 && (

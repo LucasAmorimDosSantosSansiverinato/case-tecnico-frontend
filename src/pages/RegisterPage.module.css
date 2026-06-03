@@ -1,7 +1,4 @@
-.page {
-  min-height: 100vh;
-  background: var(--color-bg);
-}
+.page { min-height: 100vh; background: var(--color-bg); }
 
 .header {
   background: var(--color-surface);
@@ -13,29 +10,24 @@
   justify-content: space-between;
 }
 
-.logo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary);
+.logoWrap { display: flex; align-items: center; gap: 12px; }
+
+.logoIcon {
+  width: 36px; height: 36px;
+  background: var(--color-primary);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 1.1rem; color: #fff;
 }
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+.logo { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
+.logoSub { font-size: 0.72rem; color: var(--color-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
-.main {
-  max-width: 720px;
-  margin: 40px auto;
-  padding: 0 24px;
-}
+.nav { display: flex; align-items: center; gap: 16px; }
 
-.card {}
+.main { max-width: 680px; margin: 48px auto; padding: 0 20px; }
 
-.cardTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 24px;
-  color: var(--color-text);
-}
+.heading { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; color: var(--color-text); }
+.subheading { font-size: 0.88rem; color: var(--color-muted); margin-bottom: 28px; }
+
+.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 14px; padding: 28px; box-shadow: var(--shadow); }

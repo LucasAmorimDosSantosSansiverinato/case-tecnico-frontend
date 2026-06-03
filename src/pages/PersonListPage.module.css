@@ -1,50 +1,12 @@
-.page {
-  min-height: 100vh;
-  background: var(--color-bg);
-}
-
-.header {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.main {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 0 24px;
-}
-
-.title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.loading, .empty {
-  color: var(--color-text-muted);
-  text-align: center;
-  padding: 32px;
-}
+.page { min-height: 100vh; background: var(--color-bg); }
+.header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+.logoWrap { display: flex; align-items: center; gap: 12px; }
+.logoIcon { width: 36px; height: 36px; background: var(--color-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #fff; }
+.logo { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
+.logoSub { font-size: 0.72rem; color: var(--color-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.nav { display: flex; align-items: center; gap: 16px; }
+.main { max-width: 800px; margin: 48px auto; padding: 0 20px; }
+.heading { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+.subheading { font-size: 0.88rem; color: var(--color-muted); margin-bottom: 28px; }
+.list { display: flex; flex-direction: column; gap: 12px; }
+.loading, .empty { color: var(--color-muted); text-align: center; padding: 48px; }

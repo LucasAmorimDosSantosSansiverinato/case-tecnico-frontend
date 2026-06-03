@@ -5,17 +5,18 @@
 }
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-danger: #dc2626;
-  --color-success: #16a34a;
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #1e293b;
-  --color-text-muted: #64748b;
-  --radius: 8px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.12);
+  --color-bg:        #001028;
+  --color-surface:   #001E3C;
+  --color-surface-2: #002952;
+  --color-border:    #1a3a5c;
+  --color-primary:   #EC7000;
+  --color-primary-h: #D46200;
+  --color-text:      #FFFFFF;
+  --color-muted:     #8BA3BD;
+  --color-danger:    #FF6B6B;
+  --color-success:   #4CAF82;
+  --radius:          10px;
+  --shadow:          0 4px 20px rgba(0,0,0,0.4);
 }
 
 body {
@@ -23,12 +24,16 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 a { color: var(--color-primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
 
 input, select, textarea {
   font-family: inherit;
   font-size: 1rem;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

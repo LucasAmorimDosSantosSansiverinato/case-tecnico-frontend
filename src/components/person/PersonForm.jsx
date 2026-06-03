@@ -1,35 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Alert } from '../ui/Alert';
-import { formatCpf, formatCep, extractApiError } from '../../lib/utils';
-import { useCepLookup } from '../../hooks/useCepLookup';
 import { personService } from '../../services/api';
 import styles from './PersonForm.module.css';
 
+function formatCpf(v) {
+  const d = v.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return d.slice(0,3) + '.' + d.slice(3);
+  if (d.length <= 9) return d.slice(0,3) + '.' + d.slice(3,6) + '.' + d.slice(6);
+  return d.slice(0,3) + '.' + d.slice(3,6) + '.' + d.slice(6,9) + '-' + d.slice(9);
+}
+
+function formatCep(v) {
+  const d = v.replace(/\D/g, '').slice(0, 8);
+  if (d.length <= 5) return d;
+  return d.slice(0,5) + '-' + d.slice(5);
+}
+
 export function PersonForm({ onSuccess }) {
-  const { register, handleSubmit, setValue, watch, formState: { errors }, setError } = useForm();
-  const { lookup, loading: cepLoading, error: cepError } = useCepLookup();
+  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onSubmit' });
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
-
-  const cepValue = watch('cep', '');
-
-  // Auto-fill address when CEP is fully typed
-  useEffect(() => {
-    const digits = cepValue.replace(/\D/g, '');
-    if (digits.length === 8) {
-      lookup(digits).then(addr => {
-        if (addr) {
-          setValue('street', addr.street);
-          setValue('neighborhood', addr.neighborhood);
-          setValue('city', addr.city);
-          setValue('state', addr.state);
-        }
-      });
-    }
-  }, [cepValue]);
 
   async function onSubmit(data) {
     setSubmitting(true);
@@ -46,7 +40,9 @@ export function PersonForm({ onSuccess }) {
       });
       onSuccess(result);
     } catch (err) {
-      setApiError(extractApiError(err));
+      const d = err?.response?.data;
+      if (d?.errors) setApiError(Object.values(d.errors).join(', '));
+      else setApiError(d?.detail || d?.title || 'Erro ao cadastrar. Tente novamente.');
     } finally {
       setSubmitting(false);
     }
@@ -56,20 +52,15 @@ export function PersonForm({ onSuccess }) {
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
       {apiError && <Alert type="error">{apiError}</Alert>}
 
-      <div className={styles.row}>
-        <Input
-          label="Nome completo *"
-          placeholder="Ex: Maria Silva Souza"
-          error={errors.fullName?.message}
-          {...register('fullName', {
-            required: 'Nome completo é obrigatório',
-            pattern: {
-              value: /^[a-zA-Z ]{2,}( [a-zA-Z ]+)+$/,
-              message: 'Use apenas letras e espaços, sem acentos'
-            }
-          })}
-        />
-      </div>
+      <Input
+        label="Nome completo *"
+        placeholder="Ex: Maria Silva Souza"
+        error={errors.fullName?.message}
+        {...register('fullName', {
+          required: 'Nome completo é obrigatório',
+          pattern: { value: /^[a-zA-Z ]{2,}( [a-zA-Z ]+)+$/, message: 'Use apenas letras sem acentos. Mínimo nome e sobrenome.' }
+        })}
+      />
 
       <div className={styles.row2}>
         <Input
@@ -79,13 +70,10 @@ export function PersonForm({ onSuccess }) {
           error={errors.document?.message}
           {...register('document', {
             required: 'CPF é obrigatório',
-            onChange: (e) => {
-              e.target.value = formatCpf(e.target.value);
-            },
-            validate: v => v.replace(/\D/g, '').length === 11 || 'CPF deve ter 11 dígitos'
+            validate: v => v.replace(/\D/g,'').length === 11 || 'CPF deve ter 11 dígitos',
+            onChange: e => { e.target.value = formatCpf(e.target.value); }
           })}
         />
-
         <Input
           label="E-mail *"
           type="email"
@@ -106,48 +94,37 @@ export function PersonForm({ onSuccess }) {
           error={errors.birthDate?.message}
           {...register('birthDate', {
             required: 'Data de nascimento é obrigatória',
-            validate: v => new Date(v) <= new Date() || 'Data não pode ser futura'
+            validate: v => !v || new Date(v) <= new Date() || 'Data não pode ser futura'
           })}
         />
-
-        <div>
-          <Input
-            label="CEP *"
-            placeholder="00000-000"
-            maxLength={9}
-            error={errors.cep?.message || cepError}
-            {...register('cep', {
-              required: 'CEP é obrigatório',
-              onChange: (e) => { e.target.value = formatCep(e.target.value); },
-              validate: v => v.replace(/\D/g, '').length === 8 || 'CEP deve ter 8 dígitos'
-            })}
-          />
-          {cepLoading && <span className={styles.cepHint}>Buscando endereço...</span>}
-        </div>
-      </div>
-
-      <div className={styles.row}>
         <Input
-          label="Logradouro"
-          readOnly
-          placeholder="Preenchido automaticamente"
-          {...register('street')}
+          label="CEP *"
+          placeholder="00000-000"
+          maxLength={9}
+          error={errors.cep?.message}
+          {...register('cep', {
+            required: 'CEP é obrigatório',
+            validate: v => v.replace(/\D/g,'').length === 8 || 'CEP deve ter 8 dígitos',
+            onChange: e => { e.target.value = formatCep(e.target.value); }
+          })}
         />
       </div>
 
+      <Input label="Logradouro" placeholder="Rua, Avenida..." {...register('street')} />
+
       <div className={styles.row3}>
-        <Input label="Bairro" readOnly {...register('neighborhood')} />
-        <Input label="Cidade" readOnly {...register('city')} />
-        <Input label="UF" readOnly style={{ maxWidth: 80 }} {...register('state')} />
+        <Input label="Bairro" placeholder="Bairro" {...register('neighborhood')} />
+        <Input label="Cidade" placeholder="Cidade" {...register('city')} />
+        <Input label="UF" placeholder="SP" maxLength={2} {...register('state')} />
       </div>
 
       <div className={styles.row2}>
-        <Input label="Número" placeholder="Ex: 100" {...register('number')} />
-        <Input label="Complemento" placeholder="Ex: Apto 12" {...register('complement')} />
+        <Input label="Número" placeholder="100" {...register('number')} />
+        <Input label="Complemento" placeholder="Apto 12" {...register('complement')} />
       </div>
 
-      <Button type="submit" loading={submitting} style={{ marginTop: 8 }}>
-        Cadastrar pessoa
+      <Button type="submit" loading={submitting} style={{ width: '100%', marginTop: 8 }}>
+        Cadastrar
       </Button>
     </form>
   );
