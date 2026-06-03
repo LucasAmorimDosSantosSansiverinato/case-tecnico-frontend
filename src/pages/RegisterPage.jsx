@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PersonForm } from '../components/person/PersonForm';
 import { SuccessResult } from '../components/person/SuccessResult';
 import { Button } from '../components/ui/Button';
+import { getSession } from '../lib/auth';
 import styles from './RegisterPage.module.css';
 
 function ItauLogo() {
@@ -17,6 +18,7 @@ function ItauLogo() {
 
 export default function RegisterPage() {
   const [registered, setRegistered] = useState(null);
+  const isLoggedIn = !!getSession();
 
   return (
     <div className={styles.page}>
@@ -29,16 +31,26 @@ export default function RegisterPage() {
           </div>
         </div>
         <nav className={styles.nav}>
-          <Link to="/login">
-            <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
-              Fazer login
-            </Button>
-          </Link>
-          <Link to="/persons">
-            <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
-              Ver todos
-            </Button>
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link to="/perfil" state={{ person: getSession() }}>
+                <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                  Minha conta
+                </Button>
+              </Link>
+              <Link to="/persons">
+                <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                  Ver todos
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <Link to="/login">
+              <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                Fazer login
+              </Button>
+            </Link>
+          )}
         </nav>
       </header>
 

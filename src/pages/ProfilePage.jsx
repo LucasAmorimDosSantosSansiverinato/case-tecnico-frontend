@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PersonCard } from '../components/person/PersonCard';
 import { Button } from '../components/ui/Button';
+import { clearSession } from '../lib/auth';
 import styles from './ProfilePage.module.css';
 
 function ItauLogo() {
@@ -34,7 +35,7 @@ export default function ProfilePage() {
           </div>
         </div>
         <nav className={styles.nav}>
-          <Button variant="secondary" onClick={() => navigate('/login')} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+          <Button variant="secondary" onClick={() => { clearSession(); navigate('/login'); }} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
             Sair
           </Button>
         </nav>

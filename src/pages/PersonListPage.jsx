@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getSession } from '../lib/auth';
 import { PersonCard } from '../components/person/PersonCard';
 import { Button } from '../components/ui/Button';
 import { personService } from '../services/api';
@@ -16,11 +17,16 @@ function ItauLogo() {
 }
 
 export default function PersonListPage() {
+  const navigate = useNavigate();
   const [persons, setPersons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [retrying, setRetrying] = useState(false);
   const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (!getSession()) navigate('/login', { replace: true });
+  }, [navigate]);
 
   const load = useCallback(() => {
     setLoading(true);

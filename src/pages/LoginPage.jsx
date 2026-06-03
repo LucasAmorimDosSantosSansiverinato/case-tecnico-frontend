@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { personService } from '../services/api';
+import { saveSession } from '../lib/auth';
 import styles from './LoginPage.module.css';
 
 function ItauLogo() {
@@ -30,6 +31,7 @@ export default function LoginPage() {
     setError(null);
     try {
       const person = await personService.getByLogin(trimmed);
+      saveSession(person);
       navigate('/perfil', { state: { person } });
     } catch (err) {
       const status = err?.response?.status;
