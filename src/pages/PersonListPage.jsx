@@ -6,6 +6,16 @@ import { Alert } from '../components/ui/Alert';
 import { personService } from '../services/api';
 import styles from './PersonListPage.module.css';
 
+function ItauLogo() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="8" fill="#EC7000"/>
+      <rect x="16.5" y="13" width="3" height="10" rx="1.5" fill="white"/>
+      <circle cx="18" cy="11" r="1.5" fill="white"/>
+    </svg>
+  );
+}
+
 export default function PersonListPage() {
   const [persons, setPersons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,10 +32,10 @@ export default function PersonListPage() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logoWrap}>
-          <div className={styles.logoIcon}>P</div>
+          <ItauLogo />
           <div>
-            <div className={styles.logo}>Personalité</div>
-            <div className={styles.logoSub}>Cadastro de Pessoas</div>
+            <div className={styles.logo}>Cadastro de Pessoas</div>
+            <div className={styles.logoSub}>Itaú Personalité</div>
           </div>
         </div>
         <nav className={styles.nav}>
