@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
-console.log('[FRONTEND] Backend URL:', BACKEND_URL);
+const BFF_URL = import.meta.env.VITE_BFF_URL || 'http://localhost:3001';
+console.log('[FRONTEND] BFF URL:', BFF_URL);
 
-const api = axios.create({ baseURL: BACKEND_URL });
+const api = axios.create({ baseURL: BFF_URL });
 
 api.interceptors.request.use(config => {
   console.log(`[FRONTEND] → ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
@@ -25,13 +25,13 @@ api.interceptors.response.use(
 );
 
 export const personService = {
-  register: (data) => api.post('/api/v1/persons', data).then(r => r.data),
-  getAll: () => api.get('/api/v1/persons').then(r => r.data),
-  getById: (id) => api.get(`/api/v1/persons/${id}`).then(r => r.data)
+  register: (data) => api.post('/api/persons', data).then(r => r.data),
+  getAll: () => api.get('/api/persons').then(r => r.data),
+  getById: (id) => api.get(`/api/persons/${id}`).then(r => r.data)
 };
 
 export const addressService = {
-  findByCep: (cep) => api.get(`/api/v1/address/${cep.replace(/\D/g, '')}`).then(r => r.data)
+  findByCep: (cep) => api.get(`/api/address/${cep.replace(/\D/g, '')}`).then(r => r.data)
 };
 
 export default api;
