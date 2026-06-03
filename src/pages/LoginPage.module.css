@@ -1,0 +1,106 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+}
+
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
+.subtitle { font-size: 0.72rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.heading { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+.desc { font-size: 0.88rem; color: var(--color-muted); margin-bottom: 28px; line-height: 1.5; }
+
+.form { display: flex; flex-direction: column; gap: 20px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.input {
+  padding: 14px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 1.2rem;
+  font-family: monospace;
+  letter-spacing: 0.2em;
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  text-align: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(236,112,0,0.15);
+}
+
+.input.inputError { border-color: var(--color-danger); }
+
+.error { font-size: 0.82rem; color: var(--color-danger); }
+
+.btn {
+  padding: 14px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover:not(:disabled) { background: var(--color-primary-h); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.links a { color: var(--color-primary); text-decoration: none; }
+.links a:hover { text-decoration: underline; }

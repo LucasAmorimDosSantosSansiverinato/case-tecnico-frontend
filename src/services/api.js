@@ -27,7 +27,8 @@ api.interceptors.response.use(
 export const personService = {
   register: (data) => api.post('/api/persons', data).then(r => r.data),
   getAll: () => api.get('/api/persons').then(r => r.data),
-  getById: (id) => api.get(`/api/persons/${id}`).then(r => r.data)
+  getById: (id) => api.get(`/api/persons/${id}`).then(r => r.data),
+  getByLogin: (login) => api.get(`/api/persons/login/${login}`).then(r => r.data)
 };
 
 export const addressService = {

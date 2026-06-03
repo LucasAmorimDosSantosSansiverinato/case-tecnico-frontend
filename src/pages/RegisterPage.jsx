@@ -29,9 +29,14 @@ export default function RegisterPage() {
           </div>
         </div>
         <nav className={styles.nav}>
+          <Link to="/login">
+            <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              Fazer login
+            </Button>
+          </Link>
           <Link to="/persons">
             <Button variant="secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
-              Ver cadastros
+              Ver todos
             </Button>
           </Link>
         </nav>
