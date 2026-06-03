@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { PersonCard } from '../components/person/PersonCard';
 import { Button } from '../components/ui/Button';
-import { Alert } from '../components/ui/Alert';
 import { personService } from '../services/api';
 import styles from './PersonListPage.module.css';
 
@@ -20,13 +19,38 @@ export default function PersonListPage() {
   const [persons, setPersons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retrying, setRetrying] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    setRetrying(false);
     personService.getAll()
-      .then(setPersons)
-      .catch(() => setError('Erro ao carregar cadastros'))
-      .finally(() => setLoading(false));
+      .then(data => { setPersons(data); setLoading(false); })
+      .catch(err => {
+        const status = err?.response?.status;
+        setLoading(false);
+        if (status === 502 || status === 503 || !status) {
+          setError('starting');
+          setRetrying(true);
+          let c = 15;
+          setCountdown(c);
+          const interval = setInterval(() => {
+            c -= 1;
+            setCountdown(c);
+            if (c <= 0) {
+              clearInterval(interval);
+              load();
+            }
+          }, 1000);
+        } else {
+          setError('generic');
+        }
+      });
   }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   return (
     <div className={styles.page}>
@@ -52,7 +76,34 @@ export default function PersonListPage() {
         <p className={styles.subheading}>Todos os registros do sistema</p>
 
         {loading && <p className={styles.loading}>Carregando...</p>}
-        {error && <Alert type="error">{error}</Alert>}
+
+        {error === 'starting' && (
+          <div className={styles.startingBox}>
+            <div className={styles.startingIcon}>⏳</div>
+            <div>
+              <p className={styles.startingTitle}>Serviço iniciando</p>
+              <p className={styles.startingText}>
+                O servidor está acordando. Tentando novamente em <strong>{countdown}s</strong>...
+              </p>
+            </div>
+            <Button variant="secondary" onClick={load} style={{ padding: '8px 16px', fontSize: '0.85rem', flexShrink: 0 }}>
+              Tentar agora
+            </Button>
+          </div>
+        )}
+
+        {error === 'generic' && (
+          <div className={styles.startingBox}>
+            <div className={styles.startingIcon}>⚠️</div>
+            <div>
+              <p className={styles.startingTitle}>Erro ao carregar</p>
+              <p className={styles.startingText}>Não foi possível buscar os dados.</p>
+            </div>
+            <Button variant="secondary" onClick={load} style={{ padding: '8px 16px', fontSize: '0.85rem', flexShrink: 0 }}>
+              Tentar novamente
+            </Button>
+          </div>
+        )}
 
         <div className={styles.list}>
           {persons.map(p => <PersonCard key={p.id} person={p} />)}

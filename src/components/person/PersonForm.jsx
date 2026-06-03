@@ -40,9 +40,14 @@ export function PersonForm({ onSuccess }) {
       });
       onSuccess(result);
     } catch (err) {
-      const d = err?.response?.data;
-      if (d?.errors) setApiError(Object.values(d.errors).join(', '));
-      else setApiError(d?.detail || d?.title || 'Erro ao cadastrar. Tente novamente.');
+      const status = err?.response?.status;
+      if (status === 502 || status === 503 || !status) {
+        setApiError('Servidor iniciando, aguarde alguns segundos e tente novamente.');
+      } else {
+        const d = err?.response?.data;
+        if (d?.errors) setApiError(Object.values(d.errors).join(', '));
+        else setApiError(d?.detail || d?.title || 'Erro ao cadastrar. Tente novamente.');
+      }
     } finally {
       setSubmitting(false);
     }
