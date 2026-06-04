@@ -30,13 +30,13 @@ export function PersonForm({ onSuccess }) {
     setApiError(null);
     try {
       const result = await personService.register({
-        fullName: data.fullName.trim(),
-        document: data.document.replace(/\D/g, ''),
+        nomeCompleto: data.fullName.trim(),
+        cpf: data.document.replace(/\D/g, ''),
         email: data.email.trim(),
-        birthDate: data.birthDate,
+        dataNascimento: data.birthDate,
         cep: data.cep.replace(/\D/g, ''),
-        complement: data.complement || null,
-        number: data.number || null
+        complemento: data.complement || null,
+        numero: data.number || null
       });
       onSuccess(result);
     } catch (err) {

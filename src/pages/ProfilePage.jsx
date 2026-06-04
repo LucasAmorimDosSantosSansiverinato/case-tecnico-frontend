@@ -45,7 +45,7 @@ export default function ProfilePage() {
         <div className={styles.welcomeBox}>
           <div className={styles.welcomeIcon}>👤</div>
           <div>
-            <div className={styles.welcomeTitle}>Olá, {person.fullName.split(' ')[0]}</div>
+            <div className={styles.welcomeTitle}>Olá, {(person.nomeCompleto || person.fullName || '').split(' ')[0]}</div>
             <div className={styles.welcomeSub}>Login: <span className={styles.loginBadge}>{person.login}</span></div>
           </div>
         </div>
