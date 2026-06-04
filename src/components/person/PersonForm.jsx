@@ -140,15 +140,37 @@ export function PersonForm({ onSuccess }) {
       </div>
 
       {/* Endereço preenchido automaticamente após busca do CEP */}
-      {cepLoading && <p style={{ fontSize: '0.85rem', color: '#666' }}>Buscando endereço...</p>}
+      {cepLoading && <p style={{ fontSize: '0.85rem', color: '#888' }}>Buscando endereço...</p>}
 
       {address && (
-        <div className={styles.addressBox}>
-          <p className={styles.addressText}>
-            {[address.street, address.neighborhood, address.city, address.state]
-              .filter(Boolean).join(' — ')}
-          </p>
-        </div>
+        <>
+          <Input
+            label="Logradouro"
+            value={address.street || ''}
+            readOnly
+            style={{ background: 'rgba(255,255,255,0.05)', cursor: 'default' }}
+          />
+          <div className={styles.row3 || styles.row2}>
+            <Input
+              label="Bairro"
+              value={address.neighborhood || ''}
+              readOnly
+              style={{ background: 'rgba(255,255,255,0.05)', cursor: 'default' }}
+            />
+            <Input
+              label="Cidade"
+              value={address.city || ''}
+              readOnly
+              style={{ background: 'rgba(255,255,255,0.05)', cursor: 'default' }}
+            />
+            <Input
+              label="UF"
+              value={address.state || ''}
+              readOnly
+              style={{ background: 'rgba(255,255,255,0.05)', cursor: 'default', maxWidth: 80 }}
+            />
+          </div>
+        </>
       )}
 
       <div className={styles.row2}>
