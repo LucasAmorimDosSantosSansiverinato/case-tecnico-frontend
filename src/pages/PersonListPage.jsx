@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSession } from '../lib/auth';
 import { PersonCard } from '../components/person/PersonCard';
@@ -21,8 +21,10 @@ export default function PersonListPage() {
   const [persons, setPersons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [retrying, setRetrying] = useState(false);
   const [countdown, setCountdown] = useState(0);
+
+  // Ref para permitir chamada recursiva dentro do intervalo sem referência circular
+  const loadRef = useRef(null);
 
   useEffect(() => {
     if (!getSession()) navigate('/login', { replace: true });
@@ -31,7 +33,6 @@ export default function PersonListPage() {
   const load = useCallback(() => {
     setLoading(true);
     setError(null);
-    setRetrying(false);
     personService.getAll()
       .then(data => { setPersons(data); setLoading(false); })
       .catch(err => {
@@ -39,7 +40,6 @@ export default function PersonListPage() {
         setLoading(false);
         if (status === 502 || status === 503 || !status) {
           setError('starting');
-          setRetrying(true);
           let c = 15;
           setCountdown(c);
           const interval = setInterval(() => {
@@ -47,7 +47,7 @@ export default function PersonListPage() {
             setCountdown(c);
             if (c <= 0) {
               clearInterval(interval);
-              load();
+              loadRef.current?.();
             }
           }, 1000);
         } else {
@@ -55,6 +55,9 @@ export default function PersonListPage() {
         }
       });
   }, []);
+
+  // Mantém a ref sempre atualizada com a versão mais recente do load
+  useEffect(() => { loadRef.current = load; }, [load]);
 
   useEffect(() => { load(); }, [load]);
 

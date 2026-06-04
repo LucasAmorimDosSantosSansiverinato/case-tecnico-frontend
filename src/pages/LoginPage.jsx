@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { personService } from '../services/api';
+import { authService } from '../services/api';
 import { saveSession } from '../lib/auth';
 import styles from './LoginPage.module.css';
 
@@ -27,11 +27,14 @@ export default function LoginPage() {
       setError('O login deve ter exatamente 7 letras minúsculas.');
       return;
     }
+
     setLoading(true);
     setError(null);
+
     try {
-      const person = await personService.getByLogin(trimmed);
-      saveSession(person);
+      // BFF autentica o login, verifica no Backend e retorna JWT + dados da pessoa
+      const { token, person } = await authService.login(trimmed);
+      saveSession(token, person);
       navigate('/perfil', { state: { person } });
     } catch (err) {
       const status = err?.response?.status;

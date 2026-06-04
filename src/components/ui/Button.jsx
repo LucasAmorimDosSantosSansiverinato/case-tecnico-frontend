@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
 export function Button({ children, variant = 'primary', loading, ...props }) {
@@ -11,3 +12,10 @@ export function Button({ children, variant = 'primary', loading, ...props }) {
     </button>
   );
 }
+
+Button.propTypes = {
+  children: PropTypes.node,
+  variant: PropTypes.string,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+};

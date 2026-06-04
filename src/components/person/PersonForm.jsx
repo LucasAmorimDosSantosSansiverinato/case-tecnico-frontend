@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
+import { useCepLookup } from '../../hooks/useCepLookup';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Alert } from '../ui/Alert';
@@ -21,22 +23,43 @@ function formatCep(v) {
 }
 
 export function PersonForm({ onSuccess }) {
-  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onSubmit' });
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onSubmit' });
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const [address, setAddress] = useState(null);
+
+  const { lookup, loading: cepLoading, error: cepError } = useCepLookup();
+
+  async function handleCepChange(e) {
+    const formatted = formatCep(e.target.value);
+    e.target.value = formatted;
+
+    // Busca automática ao completar 8 dígitos
+    const digits = formatted.replace(/\D/g, '');
+    if (digits.length === 8) {
+      const data = await lookup(digits);
+      if (data) {
+        setAddress(data);
+        setValue('cep', formatted);
+      }
+    } else {
+      setAddress(null);
+    }
+  }
 
   async function onSubmit(data) {
     setSubmitting(true);
     setApiError(null);
     try {
+      // Envia apenas CEP, complemento e número — o backend preenche o endereço via ViaCEP
       const result = await personService.register({
-        nomeCompleto: data.fullName.trim(),
-        cpf: data.document.replace(/\D/g, ''),
-        email: data.email.trim(),
+        nomeCompleto:   data.fullName.trim(),
+        cpf:            data.document.replace(/\D/g, ''),
+        email:          data.email.trim(),
         dataNascimento: data.birthDate,
-        cep: data.cep.replace(/\D/g, ''),
-        complemento: data.complement || null,
-        numero: data.number || null
+        cep:            data.cep.replace(/\D/g, ''),
+        complemento:    data.complement || null,
+        numero:         data.number     || null,
       });
       onSuccess(result);
     } catch (err) {
@@ -102,26 +125,31 @@ export function PersonForm({ onSuccess }) {
             validate: v => !v || new Date(v) <= new Date() || 'Data não pode ser futura'
           })}
         />
+
         <Input
           label="CEP *"
           placeholder="00000-000"
           maxLength={9}
-          error={errors.cep?.message}
+          error={errors.cep?.message || cepError}
           {...register('cep', {
             required: 'CEP é obrigatório',
             validate: v => v.replace(/\D/g,'').length === 8 || 'CEP deve ter 8 dígitos',
-            onChange: e => { e.target.value = formatCep(e.target.value); }
+            onChange: handleCepChange,
           })}
         />
       </div>
 
-      <Input label="Logradouro" placeholder="Rua, Avenida..." {...register('street')} />
+      {/* Endereço preenchido automaticamente após busca do CEP */}
+      {cepLoading && <p style={{ fontSize: '0.85rem', color: '#666' }}>Buscando endereço...</p>}
 
-      <div className={styles.row3}>
-        <Input label="Bairro" placeholder="Bairro" {...register('neighborhood')} />
-        <Input label="Cidade" placeholder="Cidade" {...register('city')} />
-        <Input label="UF" placeholder="SP" maxLength={2} {...register('state')} />
-      </div>
+      {address && (
+        <div className={styles.addressBox}>
+          <p className={styles.addressText}>
+            {[address.street, address.neighborhood, address.city, address.state]
+              .filter(Boolean).join(' — ')}
+          </p>
+        </div>
+      )}
 
       <div className={styles.row2}>
         <Input label="Número" placeholder="100" {...register('number')} />
@@ -134,3 +162,7 @@ export function PersonForm({ onSuccess }) {
     </form>
   );
 }
+
+PersonForm.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
+};

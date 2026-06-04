@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Button } from '../ui/Button';
 import { PersonCard } from './PersonCard';
 import styles from './SuccessResult.module.css';
@@ -19,3 +20,10 @@ export function SuccessResult({ person, onRegisterAnother }) {
     </div>
   );
 }
+
+SuccessResult.propTypes = {
+  person: PropTypes.shape({
+    login: PropTypes.string,
+  }).isRequired,
+  onRegisterAnother: PropTypes.func.isRequired,
+};

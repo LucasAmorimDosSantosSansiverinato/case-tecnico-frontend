@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import styles from './PersonCard.module.css';
 
 export function PersonCard({ person }) {
@@ -28,3 +29,18 @@ export function PersonCard({ person }) {
     </div>
   );
 }
+
+PersonCard.propTypes = {
+  person: PropTypes.shape({
+    nomeCompleto: PropTypes.string,
+    fullName: PropTypes.string,
+    cpf: PropTypes.string,
+    document: PropTypes.string,
+    email: PropTypes.string,
+    dataNascimento: PropTypes.string,
+    birthDate: PropTypes.string,
+    login: PropTypes.string,
+    endereco: PropTypes.object,
+    address: PropTypes.object,
+  }).isRequired,
+};
