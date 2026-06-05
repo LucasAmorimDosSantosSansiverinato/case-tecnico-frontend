@@ -1,68 +1,45 @@
 # Frontend — desafioTecnico
 
-## Posição na Arquitetura
+## Arquitetura
 
 ```
 [Frontend] → BFF → Backend → PostgreSQL
 ```
 
-O Frontend é a interface do usuário. Comunica-se exclusivamente com o BFF — nunca acessa o Backend ou o banco diretamente.
+Fala só com o BFF — nunca com o Backend diretamente.
+
+---
 
 ## Stack
 
 - React 18 / Vite 6
-- React Router DOM 6
 - React Hook Form
+- React Router DOM 6
 - Axios
-- ESLint configurado com plugins React
+
+---
+
+## Decisões
+
+**React Hook Form:** validação integrada por campo, sem re-render a cada tecla, menos boilerplate que controlar estado manualmente.
+
+**JWT no localStorage:** tradeoff conhecido — `httpOnly cookie` seria mais seguro contra XSS, mas exigiria mais configuração de CORS/credentials. Para o escopo do case ficou ok.
+
+**CEP automático:** ao digitar o CEP, chama `GET /api/address/{cep}` no BFF que consulta o ViaCEP. Logradouro, bairro, cidade e UF preenchem sozinhos.
+
+---
 
 ## Funcionalidades
 
-- **Cadastro de pessoa** — formulário com preenchimento automático do endereço ao digitar o CEP (via ViaCEP)
-- **Login** — autenticação pelo login gerado no cadastro; recebe JWT do BFF
-- **Perfil** — exibe dados da pessoa autenticada
-- **Listagem** — visualiza todos os cadastros (requer autenticação)
+- Formulário de cadastro com máscaras de CPF e CEP
+- Preenchimento automático de endereço via CEP
+- Validação de campos no cliente antes do envio
+- Exibição do login gerado após cadastro bem-sucedido
+- Login com o login gerado + autenticação JWT
+- Listagem de todas as pessoas (rota protegida)
 
-## Segurança (JWT)
-
-- Após login, o JWT é armazenado no `localStorage`
-- Toda requisição ao BFF inclui `Authorization: Bearer <token>` automaticamente
-- Token expirado é detectado no cliente e redireciona para `/login`
-- Resposta 401 do BFF também força logout automático
+---
 
 ## Hospedagem
 
-Produção: **Cloudflare Pages** — deploy automático via GitHub Actions no push para `main`.
-
-## Como Rodar Localmente
-
-> Comece pelo projeto **Case-Tecnico** (migration) que sobe toda a infraestrutura.
-
-```bash
-# 1. Sobe banco, migrations, backend e BFF
-cd Case-Tecnico && docker compose up
-
-# 2. Sobe o frontend
-cd case-tecnico-frontend
-npm install
-npm run dev
-```
-
-Disponível em `http://localhost:5173`
-
-## Scripts
-
-| Comando | Descrição |
-|---|---|
-| `npm run dev` | Inicia em modo desenvolvimento |
-| `npm run build` | Gera build de produção |
-| `npm run lint` | Verifica problemas com ESLint |
-| `npm run lint:fix` | Corrige problemas automaticamente |
-
-## Variáveis de Ambiente
-
-| Variável | Descrição | Padrão local |
-|---|---|---|
-| `VITE_BFF_URL` | URL do BFF | `http://localhost:3001` |
-
-Copie `.env.example` para `.env`.
+Cloudflare Pages — free tier, CDN global, deploy automático no push para `main`.
